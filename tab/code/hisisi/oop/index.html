@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>tab-demo</title>
+
+    <style>
+        .newtab, .newtab2{
+            width: 600px;
+            margin: 0 auto;
+            height: 220px;
+            border: 1px solid #999999;
+            border-top-left-radius: .3em;
+            border-top-right-radius: .3em;
+            position: relative;
+            margin-top: 10px;
+        }
+        .newtab .triggers,.newtab2 .triggers{
+            width: 200px;
+            height: 80px;
+            line-height: 80px;
+            cursor: pointer;
+            float: left;
+            display: inline-block;
+            text-align: center;
+            box-sizing: border-box;
+            border-bottom: 1px solid #999999;
+            border-right: 1px solid #999999;
+        }
+        .newtab .triggers:last-child, .newtab2 .triggers:last-child{
+            border-right: none;
+        }
+        .newtab .active,  .newtab2 .active{
+            background: #7eb05b;
+        }
+
+        .newtab .contents, .newtab2 .contents{
+            width: 600px;
+            height: 140px;
+            position: absolute;
+            top: 80px;
+            left: 0;
+            padding: 10px;
+        }
+
+    </style>
+
+</head>
+<body>
+	<p>Tab 选项卡（面向对象） By hisisi</p>
+    <div class="newtab">
+        <span class="triggers">tab1</span>
+        <span class="triggers">tab2</span>
+        <span class="triggers">tab3</span>
+
+        <div class="contents" style="display: none">aaaaaaaa</div>
+        <div class="contents" style="display: none">bbbbbbbb</div>
+        <div class="contents" style="display: none">cccccccc</div>
+    </div>
+
+    <div class="newtab2">
+        <span class="triggers">tab1</span>
+        <span class="triggers">tab2</span>
+        <span class="triggers">tab3</span>
+
+        <div class="contents" style="display: none">aaaaaaaa</div>
+        <div class="contents" style="display: none">bbbbbbbb</div>
+        <div class="contents" style="display: none">cccccccc</div>
+    </div>
+
+    <script>
+
+        window.onload = function(){
+
+            var opt = {
+                element: '.newtab',
+                triggers: '.triggers',
+                contents: '.contents',
+                activeIndex: 1,
+                triggerType: 'click',
+                onSwitch: function (index, count) {
+                    alert( '当前索引是' + index+',' + 'tab总数是' + count +'!' );
+
+                }
+            };
+
+            var opt2 = {
+                element: '.newtab2',
+                triggers: '.triggers',
+                contents: '.contents',
+                activeIndex: 2,
+                triggerType: 'mouseover',
+                onSwitch: function (index, count) {
+                }
+            };
+
+            var t = new Tab(opt);
+            t.init();
+
+            var t2 = new Tab(opt2);
+            t2.init();
+
+        };
+
+        function Tab(opt){
+
+
+            this.newtab = document.querySelector(opt.element);
+            this.triggers = this.newtab.querySelectorAll(opt.triggers);
+            this.contents = this.newtab.querySelectorAll(opt.contents);
+            this.activeIndex = opt.activeIndex;
+            this.triggerType  = opt.triggerType;
+            this.onSwitch  = opt.onSwitch;
+        }
+
+        Tab.prototype.init = function(){
+
+            if(this.activeIndex){
+                this.triggers[this.activeIndex].index = this.activeIndex;
+            }
+            this.showTab(this.triggers[this.activeIndex]);
+
+            for(var i=0; i< this.triggers.length; i++){
+                var that = this;
+                this.triggers[i].index = i;
+                this.triggers[i].addEventListener(this.triggerType,function(){
+                    that.showTab(this);
+                    that.onSwitch.call(this, this.index, that.triggers.length);
+                });
+            }
+        }
+        Tab.prototype.showTab = function(obj){
+            for(var i=0; i<this.triggers.length; i++){
+                this.triggers[i].classList.remove('active');
+                this.contents[i].style.display = 'none';
+            }
+            obj.classList.add('active');
+            this.contents[obj.index].style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>
