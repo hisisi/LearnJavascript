@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>DialogDemo</title>
+    <style>
+        .show-btn{
+            width: 120px;
+            height: 46px;
+            display: block;
+            margin: 20px auto;
+        }
+        .dialog{
+            position: absolute;
+            border: 10px solid #666666;
+        }
+        .dialog .title{
+            width: auto;
+            height: 25px;
+            padding: 20px;
+            line-height: 25px;
+            background-color: #ebebeb;
+            font-size: 20px;
+            margin: 0;
+            border-bottom: 2px solid #ccc;
+            position: relative;
+        }
+        .dialog .title .close-btn{
+            position: absolute;
+            display: block;
+            width: 30px;
+            height: 30px;
+            top: 10px;
+            right: 10px;
+        }
+        .dialog .content{
+            width: auto;
+            padding: 20px;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <button type="button" class="show-btn j_ShowBtn">Click me</button>
+
+    <script>
+
+    window.onload = function() {
+        var showBtn = document.querySelector('.j_ShowBtn');
+
+        showBtn.onclick = function() {
+            var d1 = new Dialog();
+            d1.init({
+                index : 0
+            });
+        }
+    }
+
+    function Dialog() {
+        this.uiDialog = null;
+
+        this.defaults = {
+            width: 600,
+            height: 300,
+            title: '我真的是标题哦',
+            content: '哈哈哈哈哈',
+            onClose: function(){
+                console.log('关闭咯');
+            }
+        };
+    }
+
+    Dialog.prototype.json = {};
+
+    Dialog.prototype.init = function( opt ) {
+        extend( this.defaults, opt );
+
+        if(this.json[opt.index] == undefined){
+            this.json[opt.index] = true;
+        }
+        if(this.json[opt.index]) {
+
+            this.create();
+            this.close();
+
+            this.json[opt.index] = false;
+
+        }
+
+
+    }
+
+    Dialog.prototype.create = function() {
+        this.uiDialog = document.createElement('div');
+        this.uiDialog.classList.add('dialog');
+        this.uiDialog.innerHTML = '<p class="title"><span>'+ this.defaults.title +'</span><img class="close-btn j_CloseBtn" src="closeBtn.png"></p><p class="content">'+ this.defaults.content +'</p>';
+        document.body.appendChild( this.uiDialog );
+
+
+        this.setData();
+
+    }
+
+    Dialog.prototype.setData = function(){
+
+
+        this.uiDialog.style.width = this.defaults.width + 'px';
+        this.uiDialog.style.height = this.defaults.height + 'px';
+
+        this.uiDialog.style.left =  (viewWidth() - this.uiDialog.offsetWidth)/2 + 'px';
+        this.uiDialog.style.top =  (viewHeight() - this.uiDialog.offsetHeight)/2 + 'px'
+
+    }
+
+    Dialog.prototype.close = function() {
+        var _this = this;
+        var closeBtn = this.uiDialog.querySelector('.j_CloseBtn');
+        closeBtn.onclick = function() {
+            _this.defaults.onClose();
+            document.body.removeChild( _this.uiDialog );
+            _this.json[_this.defaults.index] = true;
+        }
+    }
+
+    Dialog.prototype.fade = function(sec) {
+        var speed = sec;
+        var alpha = this.uiDialog.style.opacity * 100;
+        clearInterval(timer);
+        var timer = setInterval(function(){
+            alpha += speed;
+            if(alpha == 100 || alpha == 0){
+                clearInterval(timer);
+            }
+            this.uiDialog.style.opacity = alpha/100;
+            if(speed < 0 && alpha == 0){
+                this.uiDialog.classList.add('hide');
+            }
+        }, 30);
+    }
+
+
+    function extend(obj1,obj2){
+        for(var attr in obj2){
+            obj1[attr] = obj2[attr];
+        }
+    }
+
+    function viewWidth() {
+        return document.documentElement.clientWidth;
+    }
+    function viewHeight() {
+        return document.documentElement.clientHeight;
+    }
+
+
+
+</script>
+</body>
+</html>
