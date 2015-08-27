@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>放大镜demo</title>
+    <style>
+        .wrap{
+            width: 260px;
+            height: 260px;
+            overflow: hidden;
+            position: relative;
+            float: left;
+            margin-right: 20px;
+        }
+        .wrap .mark{
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            background-color: #000;
+            opacity: 0.3;
+            left: 0;
+            top: 0;
+        }
+        
+        .show{
+            width: 400px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ebebeb;
+        }
+        .show .original{
+            position: absolute;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="wrap j_Wrap">
+        <img src="s-photo.png">
+        <div class="mark j_Mark" style="display: none;"></div>
+    </div>
+    <div class="show j_Show" style="display: none;">
+        <img class="original j_Original" src="photo.png">
+    </div>
+    <script>
+        (function(doc) {
+
+            var wrap = doc.querySelector('.j_Wrap');
+            var mark = wrap.querySelector('.j_Mark');
+
+            var show = doc.querySelector('.j_Show');
+            var original = show.querySelector('.j_Original');
+
+
+            wrap.onmouseenter = function() {
+                mark.style.display = "block";
+                show.style.display = "block";
+            }
+            wrap.onmouseleave = function() {
+                mark.style.display = "none";
+                show.style.display = "none";
+            }
+            wrap.onmousemove = function(ev) {
+
+                divX = ev.clientX - wrap.offsetLeft - mark.offsetWidth/2;
+                divY = ev.clientY - wrap.offsetTop - mark.offsetHeight/2;
+
+
+                if(divX < 0) {
+                    divX = 0;
+                }
+                else if( divX > wrap.offsetWidth - mark.offsetWidth ) {
+                    divX  = wrap.offsetWidth - mark.offsetWidth;
+                }
+                if(divY < 0) {
+                    divY = 0;
+                }
+                else if( divY > wrap.offsetHeight - mark.offsetHeight ) {
+                    divY  = wrap.offsetHeight - mark.offsetHeight;
+                }
+
+                mark.style.left = divX + 'px';
+                mark.style.top = divY + 'px';
+
+
+
+                var scaleX = divX/(wrap.offsetWidth - mark.offsetWidth);
+                var scaleY = divY/(wrap.offsetHeight - mark.offsetHeight);
+
+                original.style.left = - scaleX * (original.offsetWidth - show.offsetWidth) + 'px';
+                original.style.top = - scaleY * (original.offsetHeight - show.offsetHeight) + 'px';
+
+
+
+            }
+
+
+
+        })(document.body);
+    </script>
+</body>
+</html>
